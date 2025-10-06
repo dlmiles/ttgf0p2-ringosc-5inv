@@ -9,6 +9,7 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
+Set rst_n to 1 to make reset inactive.
 Set ui\_in[0] to 1 to enable oscillator.
 
 ## How to test

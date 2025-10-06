@@ -102,6 +102,6 @@ module tt_um_dlmiles_ringosc_5inv (
   assign uio_oe  = 8'hff;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{clk, 1'b0};
+  wire _unused = &{clk, uio_in[7:0], ui_in[7:1], 1'b0};
 
 endmodule

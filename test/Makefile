@@ -15,12 +15,12 @@ VERILOG_SOURCES += $(addprefix $(SRC_DIR)/,$(PROJECT_SOURCES))
 COMPILE_ARGS    += -DCOCOTB_SIM=1
 COMPILE_ARGS    += -DSIM
 
-WAVES = 1
 
 else
 
 # Gate level simulation:
 SIM_BUILD	= sim_build/gl
+COMPILE_ARGS    += -DCOCOTB_SIM=1
 COMPILE_ARGS    += -DGL_TEST
 COMPILE_ARGS    += -DFUNCTIONAL
 COMPILE_ARGS    += -DUSE_POWER_PINS
@@ -32,12 +32,13 @@ VERILOG_SOURCES += $(PDK_ROOT)/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/verilo
 # this gets copied in by the GDS action workflow
 VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
 
-WAVES = 1
-
 endif
 
 # Allow sharing configuration between design and testbench via `include`:
 COMPILE_ARGS 	+= -I$(SRC_DIR)
+
+# Until cocotb2 fix cocotb#issue#5025 is in PyPi
+WAVES = 1
 
 # Include the testbench sources:
 VERILOG_SOURCES += $(PWD)/tb.v
