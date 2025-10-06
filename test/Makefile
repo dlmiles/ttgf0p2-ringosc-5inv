@@ -20,10 +20,10 @@ else
 
 # Gate level simulation:
 SIM_BUILD	= sim_build/gl
-COMPILE_ARGS    += -DCOCOTB_SIM=1
 COMPILE_ARGS    += -DGL_TEST
 COMPILE_ARGS    += -DFUNCTIONAL
 COMPILE_ARGS    += -DUSE_POWER_PINS
+COMPILE_ARGS    += -DCOCOTB_SIM=1
 COMPILE_ARGS    += -DSIM
 COMPILE_ARGS    += -DUNIT_DELAY=\#1
 VERILOG_SOURCES += $(PDK_ROOT)/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/verilog/primitives.v

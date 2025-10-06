@@ -5,8 +5,19 @@
 
 `default_nettype none
 
+`ifdef TIMESCALE
 // we'll go 100ps here so VCD is saner with ring oscillator
 `timescale 1ns / 100ps
+`endif
+
+// This is to manage lint checking to not report about unconnected power pins.
+`ifdef USE_POWER_PINS
+`define LINT_OFF_PINMISSING_POWER_PINS /* verilator lint_off PINMISSING */
+`define LINT_ON_PINMISSING_POWER_PINS /* verilator lint_on PINMISSING */
+`else
+`define LINT_OFF_PINMISSING_POWER_PINS /* */
+`define LINT_ON_PINMISSING_POWER_PINS /* */
+`endif
 
 module tt_um_dlmiles_ringosc_5inv (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -45,10 +56,12 @@ module tt_um_dlmiles_ringosc_5inv (
 `ifdef COCOTB_SIM
       assign #1 ring[n+1] = ~ring[n];
 `else
+     `LINT_OFF_PINMISSING_POWER_PINS
       (* keep, syn_keep *) gf180mcu_fd_sc_mcu7t5v0__inv_1 inv_notouch_ (
         .ZN   (ring[n+1]),
         .I    (ring[n])
       );
+     `LINT_ON_PINMISSING_POWER_PINS
 `endif
     end
   endgenerate
@@ -66,6 +79,7 @@ module tt_um_dlmiles_ringosc_5inv (
 
   assign dff_q_clk[0] = ring_valve;
 
+
   generate
     genvar d;
     for(d = 0; d < DIVIDER_LENGTH; d = d + 1) begin : div
@@ -81,17 +95,21 @@ module tt_um_dlmiles_ringosc_5inv (
       assign dff_qn_d [d]     = qn[d];
       assign dff_q_clk[d + 1] = q[d];
 `else
+     `LINT_OFF_PINMISSING_POWER_PINS
       (* keep, syn_keep *) gf180mcu_fd_sc_mcu7t5v0__dffrnq_1 div_notouch_ (
         .RN       (rst_n),
         .CLK      (dff_q_clk[d]),
         .D        (dff_qn_d [d]),
         .Q        (dff_q_clk[d+1])
       );
-      // No single cell with Q_N output, so we oblige
+     `LINT_ON_PINMISSING_POWER_PINS
+      // No single cell with Q_N output, so we explicitly insert inverter
+     `LINT_OFF_PINMISSING_POWER_PINS
       (* keep, syn_keep *) gf180mcu_fd_sc_mcu7t5v0__inv_1 divqn_notouch_ (
         .ZN   (dff_qn_d[d]),
         .I    (dff_q_clk[d+1])
       );
+     `LINT_ON_PINMISSING_POWER_PINS
 `endif
     end
   endgenerate
